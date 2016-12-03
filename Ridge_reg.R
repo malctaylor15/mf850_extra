@@ -61,6 +61,4 @@ results2  <- ifelse(predict1 > 0.5,'YES','NO')
 misClasificError <- mean(results2 != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
 
-# Confusion matrix 
-table(test$CRED_APPROVED, predict1>0.5)
 

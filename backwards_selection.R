@@ -69,6 +69,8 @@ data_col_names <- colnames(data3)
 sum(coef_names%in% data_col_names) == (length(coef_names))
 # Get the columns from the new data set 
 data_rf <- data3[,coef_names]
+# Add dependent (y) variable to data frame (easier to load into random forest function )
+y = ifelse(train$CRED_APPROVED == 'YES',1,0)
 data1 <- cbind(data_rf, y)
 
 # Random forest with that data 
@@ -79,14 +81,17 @@ fit_rf2
 importance(fit_rf2)
 
 # Create data frame to store ntree solving results 
-ntree_df <- data.frame(matrix(0, nrow= 50, ncol = 4))
+ntree_df <- data.frame(matrix(0, nrow= 50, ncol = 2))
+names(ntree_df)[1:2] <-c("Accuracy", "N Tree")
 
-# 
-# for (ntree_times in 1:15){
-#   ntree <- 500+ntree_times*10
-#   n_tree_times <- 
-#   fit_temp <- randomForest(as.factor(y)~., data= data1, ntree = ntree)
-#   ntree_df[c(ntree_times,(n_tree_times-1)),] <- fit_temp[5]
-#   ntree_df[ntree_times, 4] <- ntree
-#   
-# }
+for (ntree_times in 1:10){
+  ntree <- 500+ntree_times*10
+  index_h <- 2 * ntree_times 
+  fit_temp <- rfcv(data_rf, y , ntree = ntree)
+  error_sum <- mean(fit_temp$error.cv)
+  ntree_df[ntree_times, 1] <- 1-error_sum # accuracy 
+  ntree_df[ntree_times,2] <- ntree
+  
+}
+
+plot(ntree_df[ntree_df!=0,])

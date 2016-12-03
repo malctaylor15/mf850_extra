@@ -27,6 +27,30 @@ predict_rf <- predict(fit_rf1, newdata= test)
 misClasificError <- mean(predict_rf != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
 
+fit_temp <- rfcv(data_rf, y , ntree = ntree)
+error_sum <- mean(fit_temp$error.cv)
+
 # Confusion matrix 
 library(caret)
 # http://dni-institute.in/blogs/random-forest-using-r-step-by-step-tutorial/
+
+
+y <- train$CRED_APPROVED
+x <- model.matrix(CRED_APPROVED~., data= train)
+
+
+fit7 <- rfcv(x,y)
+fit7$error.cv
+
+
+
+for (ntree_times in 1:10){
+  ntree <- 500+ntree_times*10
+  fit_temp <- rfcv(data_rf, y , ntree = ntree)
+  error_sum <- mean(fit_temp$error.cv)
+  ntree_df[ntree_times, 1] <- 1-error_sum # accuracy 
+  ntree_df[ntree_times,2] <- ntree
+  
+}
+
+plot(ntree_df[ntree_df!=0,])

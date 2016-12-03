@@ -50,17 +50,12 @@ lasso.coef[lasso.coef!=0]
 length(lasso.coef[lasso.coef!=0])
 
 
-test1 <- model.matrix(CRED_APPROVED~., family = "binomial", data=test)
-
-predict1 <- predict(lasso1, newx= test1, type = "response", s= bestlam)
-hist(predict1, breaks= 20)
-results2  <- ifelse(predict1 > 0.5,'YES','NO')
+predict_lasso <- predict(lasso1, newx= test1, type = "response", s= bestlam)
+hist(predict_lasso, breaks= 20)
+predict_lasso  <- ifelse(predict_lasso > 0.5,'YES','NO')
 # Compare with the original results 
-misClasificError <- mean(results2 != test$CRED_APPROVED)
+misClasificError <- mean(predict_lasso != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
-
-# Confusion matrix 
-table(test$CRED_APPROVED, predict1>0.5)
 
 
 # Split categorical variables into seperate columns 

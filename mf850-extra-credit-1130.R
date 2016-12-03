@@ -42,7 +42,7 @@ cv_est <- cv.glm(data, fit1, K=10)$delta[1]
 (fit1_cv <- 1-cv_est)
 
 # Fit logisitic regression on test set 
-fit2 <- glm(CRED_APPROVED~. , family = "binomial", data=test)
+fit2 <- glm(CRED_APPROVED~. , family = "binomial", data=train)
 
 # Predict ratios on test set 
 predict_fit2 <- predict(fit2, newdata=test, type = "response")
