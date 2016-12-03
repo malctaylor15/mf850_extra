@@ -4,7 +4,7 @@
 # on the top line (where file, edit ...) - go to session -> set working directory -> choose directory 
 # Then change this line with the appropriate one 
 
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
+#setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
 data <- read.csv("mf850-loan-data.csv")
 
 # Data cleaning - change variables into categorical variables 
