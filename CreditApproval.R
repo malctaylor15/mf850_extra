@@ -221,7 +221,15 @@ table(test$CRED_APPROVED, predict_lasso_log>0.5)
 # 3.E: Random Forest Selection
 #########################################
 
-# Space for RF selection technique
+# Set the number of trees we wish to use 
+ntree <- 2000
+# Fit random Forest using training data and number of tree specified above 
+rf_fit <- randomForest(CRED_APPROVED~. , data=train,ntree = ntree)
+# Calculate error rate - random forest class pre computers class errors 
+rf_predict <- predict(rf_fit, test, type = "response")
+
+acc[6] = 1-mean(rf_predict != test$CRED_APPROVED)
+table(test$CRED_APPROVED, rf_predict)
 
 ###########################
 #                         #
@@ -229,38 +237,30 @@ table(test$CRED_APPROVED, predict_lasso_log>0.5)
 #                         #
 ###########################
 
-
 # Build matricies for storing final model data
-all_mods <- matrix(nrow = nrow(test), ncol = 5)
-final_result <- matrix(nrow = nrow(test), ncol = 9)
-error <- rep(0,9)
+all_mods <- matrix(nrow = nrow(test), ncol = 7)
 
-# loop over thresholds to find one with smallest error
-for (j in 1:9){
-  # change probabilities to 1 - Yes, and 0 - No
-  all_mods[ ,1] = ifelse(predict_log_full_test > j/10, 1, 0)
-  all_mods[ ,2] = ifelse(predict_backward_log > j/10, 1, 0)
-  all_mods[ ,3] = ifelse(predict_ridge_log[ ,1] > j/10, 1, 0)
-  all_mods[, 4] = ifelse(predict_lasso_log[ ,1] > j/10, 1, 0)
-  
-  # loop over all rows to sum Yes and No responses, majority rules
-  for (i in 1:nrow(test)){
-    yn = sum(all_mods[i, 1:4])
-    if (yn >= 2) { all_mods[i,5] = 1 }
-    else { all_mods[i,5] = 0 }
-  }
-  
-  # convert to YES and NO responses
-  final_result[ ,j] <- ifelse(all_mods[, 5] == 1, 'YES', 'NO')
-  
-  # find error 
-  error[j] <- 1 - mean(final_result[ ,j] != test$CRED_APPROVED)
+# change probabilities to 1 - Yes, and 0 - No
+all_mods[ ,1] = ifelse(predict_log_full_test > 0.5, 1, 0)
+all_mods[ ,2] = ifelse(predict_backward_log > 0.5, 1, 0)
+all_mods[ ,3] = ifelse(predict_ridge_log[ ,1] > 0.5, 1, 0)
+all_mods[ ,4] = ifelse(predict_lasso_log[ ,1] > 0.5, 1, 0)
+all_mods[ ,5] = ifelse(rf_predict == 'YES', 1, 0)
+all_mods[ ,6] = all_mods[ ,5]
+
+# loop over all rows to sum Yes and No responses, majority rules
+for (i in 1:nrow(test)){
+  yn = sum(all_mods[i, 1:6])
+  if (yn >= 3) { all_mods[i,7] = 1 }
+  else { all_mods[i,7] = 0 }
 }
+  
+# convert to YES and NO responses
+final_result <- ifelse(all_mods[, 7] == 1, 'YES', 'NO')
 
-# find best threshold
-best_all=max(which(error==max(error)))
-final_mod<-final_result[ ,best_all]
-
+# find error 
+error <- 1 - mean(final_result != test$CRED_APPROVED)
+  
 # Final confusion matrix and error rate
-table(test$CRED_APPROVED, final_mod=='YES')
-error[best_all]
+table(test$CRED_APPROVED, final_result=='YES')
+error
