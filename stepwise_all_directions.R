@@ -1,7 +1,6 @@
 # Stepwise Variable selection 
 
 
-setwd("C:/Users/Evan/Downloads")
 data <- read.csv("mf850-loan-data.csv")
 set.seed(1)
 
@@ -92,5 +91,6 @@ for(i in 1:length(all_names)){
   name_comp[i,3] = nam %in% for_names
   name_comp[i,4] = nam %in% both_names
 }
+
 
 # They are all the same, which is good i guess

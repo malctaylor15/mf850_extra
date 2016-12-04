@@ -2,7 +2,7 @@
 
 # Ridge attempt 
 
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
+#setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
 data <- read.csv("mf850-loan-data.csv")
 set.seed(1)
 # Data cleaning - change variables into categorical variables 
@@ -77,3 +77,4 @@ hist(predict_ridge_correct)
 # Probabilities where the model predicted incorrectly 
 predict_ridge_incorrect <- predict_ridge[predict_ridge_yn != test$CRED_APPROVED]
 hist(predict_ridge_incorrect)
+
