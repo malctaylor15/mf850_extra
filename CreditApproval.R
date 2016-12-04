@@ -22,7 +22,7 @@ library(caret)
 set.seed(1)
 
 # Set working directory and load the data
-setwd("C:/Users/Evan/Downloads")
+#setwd("C:/Users/Evan/Downloads")
 data <- read.csv("mf850-loan-data.csv")
 
 # Data cleaning - change variables into categorical variables 
