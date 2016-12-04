@@ -21,18 +21,13 @@ library(caret)
 # Set the Seed
 set.seed(1)
 
-<<<<<<< HEAD
 # Load the data
 #training data
-=======
-# Set working directory and load the data
-setwd("C:/Users/Evan/Downloads")
->>>>>>> e4c909faa1300f82ae1ed0787accbb983a117bb7
+
 data <- read.csv("mf850-loan-data.csv")
 #test data
 testdata <- read.csv("your_file_here.csv")
 
-<<<<<<< HEAD
 # Data cleaning - change variables into categorical variables 
 data$DEPENDENTS <- as.factor(data$DEPENDENTS)
 data$CRED_HERE <- as.factor(data$CRED_HERE)
@@ -44,8 +39,6 @@ testdata$CRED_HERE <- as.factor(data$CRED_HERE)
 testdata$INSTALLMENTRATE <- as.factor(data$INSTALLMENTRATE)
 testdata$ATADDRESSSINCE <- as.factor(data$ATADDRESSSINCE)
 
-=======
->>>>>>> e4c909faa1300f82ae1ed0787accbb983a117bb7
 # Scale continous variables 
 data$AGE <- scale(data$AGE)
 data$DURATION <- scale(data$DURATION)
