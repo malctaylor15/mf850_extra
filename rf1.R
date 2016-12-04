@@ -52,7 +52,7 @@ names(ntree_df)[1:2] <-c("N Tree", "Accuracy")
 # Check the effect of the number of trees on the feature selection technique 
 for (ntree_times in 1:numb_tries){
   ntree <- 500+ntree_times*30
-  fit_temp <- rfcv(x, y , ntree = ntree)
+  fit_temp <- randomForest(x, y , ntree = ntree)
   error_sum <- fit_temp$error.cv
   ntree_df[ntree_times, 2:7] <- 1-error_sum # accuracy 
   ntree_df[ntree_times,1] <- ntree
