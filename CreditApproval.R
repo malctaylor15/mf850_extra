@@ -21,9 +21,11 @@ library(caret)
 # Set the Seed
 set.seed(1)
 
-# Set working directory and load the data
-#setwd("C:/Users/Evan/Downloads")
+# Load the data
+#training data
 data <- read.csv("mf850-loan-data.csv")
+#test data
+testdata <- read.csv("your_file_here.csv")
 
 # Data cleaning - change variables into categorical variables 
 data$DEPENDENTS <- as.factor(data$DEPENDENTS)
@@ -31,14 +33,26 @@ data$CRED_HERE <- as.factor(data$CRED_HERE)
 data$INSTALLMENTRATE <- as.factor(data$INSTALLMENTRATE)
 data$ATADDRESSSINCE <- as.factor(data$ATADDRESSSINCE)
 
+testdata$DEPENDENTS <- as.factor(data$DEPENDENTS)
+testdata$CRED_HERE <- as.factor(data$CRED_HERE)
+testdata$INSTALLMENTRATE <- as.factor(data$INSTALLMENTRATE)
+testdata$ATADDRESSSINCE <- as.factor(data$ATADDRESSSINCE)
+
 # Scale continous variables 
 data$AGE <- scale(data$AGE)
 data$DURATION <- scale(data$DURATION)
 
-# Sample split into test train set 
-indexes <- sample(1:nrow(data), size = 0.2*nrow(data))
-test <- data[indexes, ]
-train <- data[-indexes, ]
+testdata$AGE <- scale(data$AGE)
+testdata$DURATION <- scale(data$DURATION)
+
+# Code for splitting one data set into test and training data
+## Sample split into test train set 
+#indexes <- sample(1:nrow(data), size = 0.2*nrow(data))
+#test <- data[indexes, ]
+#train <- data[-indexes, ]
+
+train <- data
+test <- testdata
 
 # Baseline of only guessing yes 
 (sum(data$CRED_APPROVED == 'YES')/ length(data$CRED_APPROVED))
@@ -264,3 +278,4 @@ error <- 1 - mean(final_result != test$CRED_APPROVED)
 # Final confusion matrix and error rate
 table(test$CRED_APPROVED, final_result=='YES')
 error
+
