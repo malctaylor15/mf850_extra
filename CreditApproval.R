@@ -6,6 +6,12 @@
 #                                       #
 #########################################
 
+#install libraries
+install.packages("boot")
+install.packages("glmnet")
+install.packages("randomForest")
+install.packages("caret")
+
 # load up the libraries
 library(boot)
 library(glmnet)
