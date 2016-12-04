@@ -1,5 +1,3 @@
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
-
 data <- read.csv("mf850-loan-data.csv")
 
 # Some data cleaning 

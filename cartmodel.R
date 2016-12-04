@@ -1,6 +1,5 @@
 # Install "rpart" package for recursive partitioning in order to CART modeling 
 
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
 data <- read.csv("mf850-loan-data.csv")
 
 # Some data cleaning 
@@ -16,9 +15,6 @@ summary(data)
 
 # load the library
 library(rpart)
-
-# load the dataset
-load("data")
 
 # Sample split into test train set 
 indexes <- sample(1:nrow(data), size = 0.2*nrow(data))

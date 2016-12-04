@@ -1,7 +1,7 @@
 # Stepwise Variable selection 
 
 
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
+#setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
 data <- read.csv("mf850-loan-data.csv")
 set.seed(1)
 
