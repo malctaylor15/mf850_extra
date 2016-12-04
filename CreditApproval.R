@@ -229,3 +229,38 @@ table(test$CRED_APPROVED, predict_lasso_log>0.5)
 #                         #
 ###########################
 
+
+# Build matricies for storing final model data
+all_mods <- matrix(nrow = nrow(test), ncol = 5)
+final_result <- matrix(nrow = nrow(test), ncol = 9)
+error <- rep(0,9)
+
+# loop over thresholds to find one with smallest error
+for (j in 1:9){
+  # change probabilities to 1 - Yes, and 0 - No
+  all_mods[ ,1] = ifelse(predict_log_full_test > j/10, 1, 0)
+  all_mods[ ,2] = ifelse(predict_backward_log > j/10, 1, 0)
+  all_mods[ ,3] = ifelse(predict_ridge_log[ ,1] > j/10, 1, 0)
+  all_mods[, 4] = ifelse(predict_lasso_log[ ,1] > j/10, 1, 0)
+  
+  # loop over all rows to sum Yes and No responses, majority rules
+  for (i in 1:nrow(test)){
+    yn = sum(all_mods[i, 1:4])
+    if (yn >= 2) { all_mods[i,5] = 1 }
+    else { all_mods[i,5] = 0 }
+  }
+  
+  # convert to YES and NO responses
+  final_result[ ,j] <- ifelse(all_mods[, 5] == 1, 'YES', 'NO')
+  
+  # find error 
+  error[j] <- 1 - mean(final_result[ ,j] != test$CRED_APPROVED)
+}
+
+# find best threshold
+best_all=max(which(error==max(error)))
+final_mod<-final_result[ ,best_all]
+
+# Final confusion matrix and error rate
+table(test$CRED_APPROVED, final_mod=='YES')
+error[best_all]
