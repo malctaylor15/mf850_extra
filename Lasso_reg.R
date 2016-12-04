@@ -1,6 +1,6 @@
 # Lasso attempt 
 
-setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
+#setwd("C:/Users/board/Desktop/Kaggle/mf850_extra")
 data <- read.csv("mf850-loan-data.csv")
 set.seed(1)
 # Data cleaning - change variables into categorical variables 
