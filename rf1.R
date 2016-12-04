@@ -26,31 +26,40 @@ fit_rf1 <- randomForest(CRED_APPROVED~. , data = train)
 predict_rf <- predict(fit_rf1, newdata= test)
 misClasificError <- mean(predict_rf != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
+#Baseline
+table(test$CRED_APPROVED)/nrow(test)
 
-fit_temp <- rfcv(data_rf, y , ntree = ntree)
-error_sum <- mean(fit_temp$error.cv)
+# Try Random forest feature selection by cross validation 
 
-# Confusion matrix 
-library(caret)
-# http://dni-institute.in/blogs/random-forest-using-r-step-by-step-tutorial/
-
-
+# Prepare data 
 y <- train$CRED_APPROVED
 x <- model.matrix(CRED_APPROVED~., data= train)
+# Fit the model
+fit_temp <- rfcv(x, y , ntree = ntree)
+# Cross validation error rate by number of features included in random forest 
+error <- (fit_temp$error.cv)
 
+# Potential RF guide 
+# http://dni-institute.in/blogs/random-forest-using-r-step-by-step-tutorial/
 
-fit7 <- rfcv(x,y)
-fit7$error.cv
+# See the effect of the number of trees on the feature selection by cross validation 
 
+numb_tries <- 6
+# Pre allocate space 
+ntree_df <- data.frame(matrix(0, nrow= numb_tries, ncol = 7))
+names(ntree_df)[1:2] <-c("N Tree", "Accuracy")
 
-
-for (ntree_times in 1:10){
-  ntree <- 500+ntree_times*10
-  fit_temp <- rfcv(data_rf, y , ntree = ntree)
-  error_sum <- mean(fit_temp$error.cv)
-  ntree_df[ntree_times, 1] <- 1-error_sum # accuracy 
-  ntree_df[ntree_times,2] <- ntree
+# Check the effect of the number of trees on the feature selection technique 
+for (ntree_times in 1:numb_tries){
+  ntree <- 500+ntree_times*30
+  fit_temp <- rfcv(x, y , ntree = ntree)
+  error_sum <- fit_temp$error.cv
+  ntree_df[ntree_times, 2:7] <- 1-error_sum # accuracy 
+  ntree_df[ntree_times,1] <- ntree
   
 }
 
-plot(ntree_df[ntree_df!=0,])
+max(ntree_df[,2:6])
+
+
+

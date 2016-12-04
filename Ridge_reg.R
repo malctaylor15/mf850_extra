@@ -43,7 +43,7 @@ plot(ridge_lambdas, ridge_cv_means, main = "ridge Lambda vs Cross Validation Err
 # should the lambda with the lowest cross validation error rate 
 bestlam = cv.ridge$lambda.min
 
-# look at coefficients which are not 0 of ridge regression 
+# look at coefficients which are not very small for the ridge regression 
 ridge1 <- glmnet(x, y, family = "binomial", alpha = 0, standardize = FALSE, lambda = lambdas)
 ridge.coef <- predict(ridge1, type = "coefficients", s= bestlam)[1:(ncol(x)) ,]
 ridge.coef
@@ -52,13 +52,28 @@ ridge.coef[abs(ridge.coef) > 0.001]
 
 length(ridge.coef[abs(ridge.coef) > 0.1])
 
+
+# Test on test set 
+
+# Prepare the test set data 
 test1 <- model.matrix(CRED_APPROVED~., family = "binomial", data=test)
-
-predict1 <- predict(ridge1, newx= test1, type = "response", s= bestlam)
-hist(predict1, breaks= 20)
-results2  <- ifelse(predict1 > 0.5,'YES','NO')
+# Make predictions using ridge model on test data 
+predict_ridge <- predict(ridge1, newx= test1, type = "response", s= bestlam)
+# Look at predictions 
+hist(predict_ridge, breaks= 20)
+# Re format results so they will be comparable 
+predict_ridge_yn <- ifelse(predict_ridge > 0.5,'YES','NO')
 # Compare with the original results 
-misClasificError <- mean(results2 != test$CRED_APPROVED)
+misClasificError <- mean(predict_ridge_yn != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
+# Compare with Baseline 
+table(test$CRED_APPROVED)/nrow(test)
 
+# Quick error analysis 
 
+# Probabilities where the model predicted correctly 
+predict_ridge_correct <- predict_ridge[predict_ridge_yn == test$CRED_APPROVED]
+hist(predict_ridge_correct)
+# Probabilities where the model predicted incorrectly 
+predict_ridge_incorrect <- predict_ridge[predict_ridge_yn != test$CRED_APPROVED]
+hist(predict_ridge_incorrect)

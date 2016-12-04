@@ -41,36 +41,28 @@ plot(lasso_lambdas, lasso_cv_means, main = "Lasso Lambda vs Cross Validation Err
 # should the lambda with the lowest cross validation error rate 
 (bestlam = cv.lasso$lambda.min)
 
-# look at coefficients which are not 0 of lasso regression 
+# look at coefficients of the lasso regression 
 lasso1 <- glmnet(x, y, family = "binomial", alpha = 1, standardize = FALSE, lambda = lasso_lambdas)
 lasso.coef <- predict(lasso1, type = "coefficients", s= bestlam)[1:(ncol(x)) ,]
 lasso.coef
-
+# Look at the coefficients which are not 0 and count the number of them 
 lasso.coef[lasso.coef!=0]
 length(lasso.coef[lasso.coef!=0])
 
+# Test model on new data 
 
+# Prepare the test set data 
+test1 <- model.matrix(CRED_APPROVED~., family = "binomial", data=test)
+# Make predictions on new data
 predict_lasso <- predict(lasso1, newx= test1, type = "response", s= bestlam)
+# Histogram of probabilities 
 hist(predict_lasso, breaks= 20)
+# Change predictions so they are comparable to test file 
 predict_lasso  <- ifelse(predict_lasso > 0.5,'YES','NO')
-# Compare with the original results 
+# Find the accuracy by comparing predictions with test results
 misClasificError <- mean(predict_lasso != test$CRED_APPROVED)
 print(paste('Accuracy',1-misClasificError))
+# Compare with Baseline 
+table(test$CRED_APPROVED)/nrow(test)
 
-
-# Split categorical variables into seperate columns 
-x = model.matrix(CRED_APPROVED~., data = train)
-# Re structure data so the data so it is a data frame and not a matrix 
-data3 <- data.frame(x)
-# Save names of the coefficients in the backward step wise regression 
-coef_names <- names(lasso.coef)
-# Delete the first name which is X intercept 
-coef_names <- coef_names[c(-1,-2)]
-# Make sure all the variables are in the data set 
-data_col_names <- colnames(data3)
-sum(coef_names%in% data_col_names) == (length(coef_names))
-# Get the columns from the new data set 
-test_rf <- data3[,coef_names]
-
-# new_log <- glm(CRED_APPROVED~., family = "binomial", data = data_rf)
 
