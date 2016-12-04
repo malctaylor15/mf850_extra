@@ -21,12 +21,18 @@ library(caret)
 # Set the Seed
 set.seed(1)
 
+<<<<<<< HEAD
 # Load the data
 #training data
+=======
+# Set working directory and load the data
+setwd("C:/Users/Evan/Downloads")
+>>>>>>> e4c909faa1300f82ae1ed0787accbb983a117bb7
 data <- read.csv("mf850-loan-data.csv")
 #test data
 testdata <- read.csv("your_file_here.csv")
 
+<<<<<<< HEAD
 # Data cleaning - change variables into categorical variables 
 data$DEPENDENTS <- as.factor(data$DEPENDENTS)
 data$CRED_HERE <- as.factor(data$CRED_HERE)
@@ -38,6 +44,8 @@ testdata$CRED_HERE <- as.factor(data$CRED_HERE)
 testdata$INSTALLMENTRATE <- as.factor(data$INSTALLMENTRATE)
 testdata$ATADDRESSSINCE <- as.factor(data$ATADDRESSSINCE)
 
+=======
+>>>>>>> e4c909faa1300f82ae1ed0787accbb983a117bb7
 # Scale continous variables 
 data$AGE <- scale(data$AGE)
 data$DURATION <- scale(data$DURATION)
@@ -82,23 +90,21 @@ log_full_train <- glm(CRED_APPROVED~. , family = "binomial", data=train)
 # Predict ratios on test set 
 predict_log_full_test <- predict(log_full_train, newdata=test, type = "response")
 
-# Loop through different probability thresholds to find most accurate
-accuracy_log_full <- rep(0, 9)
-for (i in 1:9){
-  res_log_full  <- ifelse(predict_log_full_test > i/10,'YES','NO')
-  # Compare with the original results 
-  misClasificError <- mean(res_log_full != test$CRED_APPROVED)
-  accuracy_log_full[i] = 1-misClasificError
-}
+res_log_full  <- ifelse(predict_log_full_test > 0.5,'YES','NO')
+
+# Compare with the original results 
+misClasificError <- mean(res_log_full != test$CRED_APPROVED)
+accuracy_log_full = 1-misClasificError
+
 
 # deterimine which threshold was best
 best_log_full = which(accuracy_log_full == max(accuracy_log_full))
 best = max(best_log_full)
 
 # Confusion matrix for best model
-print(paste('Accuracy - ',accuracy_log_full[best]))
-table(test$CRED_APPROVED, predict_log_full_test>best/10)
-acc[1] = accuracy_log_full[best] # store for later
+print(paste('Accuracy - ',accuracy_log_full))
+table(test$CRED_APPROVED, predict_log_full_test>0.5)
+acc[1] = accuracy_log_full # store for later
 
 all_names <- names(log_full_train$coefficients)
 
@@ -119,13 +125,13 @@ forward_log <- step(log_null_train, scope = list(lower = log_null_train, upper =
 
 # Fit to test data - using same threshold as previous model since they are logistic regression
 predict_forward_log <- predict(forward_log, newdata=test, type = "response")
-result_forward_log  <- ifelse(predict_forward_log > best/10,'YES','NO')
+result_forward_log  <- ifelse(predict_forward_log > 0.5,'YES','NO')
 
 misClasificError <- mean(result_forward_log != test$CRED_APPROVED)
 acc[2] = 1-misClasificError
 
 # Confusion matrix 
-table(test$CRED_APPROVED, predict_forward_log>best/10)
+table(test$CRED_APPROVED, predict_forward_log>0.5)
 forward_names<-names(forward_log$coefficients)
 
 # 3.B: Backwards Stepwise Selection
@@ -135,12 +141,12 @@ forward_names<-names(forward_log$coefficients)
 backward_log <- step(log_full_train, direction = "backward", trace = 0)
 
 predict_backward_log <- predict(backward_log, newdata=test, type = "response")
-result_backward_log  <- ifelse(predict_backward_log > best/10,'YES','NO')
+result_backward_log  <- ifelse(predict_backward_log > 0.5,'YES','NO')
 misClasificError <- mean(result_backward_log != test$CRED_APPROVED)
 acc[3] = 1-misClasificError
 
 # Confusion matrix 
-table(test$CRED_APPROVED, predict_backward_log>best/10)
+table(test$CRED_APPROVED, predict_backward_log>0.5)
 back_names<-names(backward_log$coefficients)
 
 # Comparing Models
@@ -185,14 +191,14 @@ length(ridge_log_coef[abs(ridge_log_coef) > 0.1])
 ridge_log_test <- model.matrix(CRED_APPROVED~., family = "binomial", data=test)
 
 predict_ridge_log <- predict(ridge_log_train, newx= ridge_log_test, type = "response", s= bestlam)
-result_ridge_log  <- ifelse(predict_ridge_log > best/10,'YES','NO')
+result_ridge_log  <- ifelse(predict_ridge_log > 0.5,'YES','NO')
 
 # Compare with the original results 
 misClasificError <- mean(result_ridge_log != test$CRED_APPROVED)
 acc[4] = 1-misClasificError
 
 # Confusion matrix 
-table(test$CRED_APPROVED, predict_ridge_log>best/10)
+table(test$CRED_APPROVED, predict_ridge_log>0.5)
 
 # 3.D: Lasso Selection
 #######################################
@@ -224,7 +230,7 @@ length(lasso_log_coef[lasso_log_coef!=0])
 lasso_log_test <- model.matrix(CRED_APPROVED~., family = "binomial", data=test)
 
 predict_lasso_log <- predict(lasso_log_train, newx= lasso_log_test, type = "response", s= bestlam)
-result_lasso_log  <- ifelse(predict_lasso_log > best/10,'YES','NO')
+result_lasso_log  <- ifelse(predict_lasso_log > 0.5,'YES','NO')
 # Compare with the original results 
 misClasificError <- mean(result_lasso_log != test$CRED_APPROVED)
 acc[5]=1-misClasificError
