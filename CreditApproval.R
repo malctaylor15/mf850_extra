@@ -26,7 +26,7 @@ set.seed(1)
 
 data <- read.csv("mf850-loan-data.csv")
 #test data
-testdata <- read.csv("your_file_here.csv")
+testdata <- read.csv("your_file_here.csv") ## LOAD YOUR TESTING DATA HERE!
 
 # Data cleaning - change variables into categorical variables 
 data$DEPENDENTS <- as.factor(data$DEPENDENTS)
@@ -48,11 +48,10 @@ testdata$DURATION <- scale(data$DURATION)
 
 # Code for splitting one data set into test and training data
 ## Sample split into test train set 
-#indexes <- sample(1:nrow(data), size = 0.2*nrow(data))
+indexes <- sample(1:nrow(data), size = 0.2*nrow(data))
 #test <- data[indexes, ]
-#train <- data[-indexes, ]
+train <- data[-indexes, ]
 
-train <- data
 test <- testdata
 
 # Baseline of only guessing yes 
